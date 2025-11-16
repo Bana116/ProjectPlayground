@@ -2,6 +2,6 @@ fastapi
 uvicorn
 jinja2
 python-multipart
-resend
-pydantic
+email-validator
+itsdangerous
 
