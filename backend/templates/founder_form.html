@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Founder Intake</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Fonts -->
+    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@600,700&f[]=general-sans@400,500,600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --text-main: #111;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --card-bg: #f9fafb;
+            --accent: #3b82f6;
+            --radius: 22px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: "General Sans", sans-serif;
+            background: #ffffff;
+            color: var(--text-main);
+            padding-bottom: 80px;
+        }
+
+        .page {
+            max-width: 900px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 18px;
+            border-radius: 999px;
+            background: #eef2ff;
+            color: #3b5bdb;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        h1 {
+            font-family: "Clash Display", sans-serif;
+            font-size: 2.8rem;
+            margin-top: 16px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            margin-top: 16px;
+            color: var(--text-muted);
+            font-size: 1rem;
+            max-width: 540px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.55;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        /* Card (matches designer styling) */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 30px 26px;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #111;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        /* Fields */
+        .field {
+            margin-bottom: 20px;
+        }
+
+        .field-label {
+            display: block;
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #111;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="url"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: #fff;
+            font-size: 1rem;
+            color: #111;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: 2px solid var(--accent);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Checkbox grid */
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px 16px;
+            margin-top: 8px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            color: #444;
+        }
+
+        .checkbox-item input {
+            accent-color: var(--accent);
+        }
+
+        /* Submit button */
+        .footer-row {
+            text-align: right;
+            margin-top: 20px;
+        }
+
+        .submit-btn {
+            padding: 14px 26px;
+            border-radius: 999px;
+            border: none;
+            background: #111;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .submit-btn:hover {
+            background: #000;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 640px) {
+            h1 { font-size: 2.2rem; }
+            .card { padding: 24px 20px; }
+        }
+    </style>
+</head>
+
+<body>
+<div class="page">
+
+    <div class="header">
+        <div class="badge">Founder intake</div>
+        <h1>Submit your project</h1>
+        <p class="subtitle">
+            Share what you're building, what you need help with, and how you like to work. Our engine will match you with aligned designers.
+        </p>
+    </div>
+
+    <form action="/submit-founder" method="post">
+
+        <!-- CARD 1 -->
+        <div class="card">
+            <div class="card-title">Profile</div>
+
+            <div class="field">
+                <label class="field-label">Full name</label>
+                <input type="text" name="full_name" required>
+            </div>
+
+            <div class="field">
+                <label class="field-label">Email</label>
+                <input type="email" name="email" required>
+            </div>
+
+            <div class="field">
+                <label class="field-label">Project name</label>
+                <input type="text" name="project_name" placeholder="What are you calling it?">
+            </div>
+
+            <div class="field">
+                <label class="field-label">Website (optional)</label>
+                <input type="url" name="website" placeholder="https://">
+            </div>
+        </div>
+
+        <!-- CARD 2 -->
+        <div class="card">
+            <div class="card-title">Stage & needs</div>
+
+            <div class="field">
+                <label class="field-label">Which stage is your project in?</label>
+                <div class="checkbox-grid">
+                    <label class="checkbox-item"><input type="checkbox" name="stage" value="Idea"> Idea</label>
+                    <label class="checkbox-item"><input type="checkbox" name="stage" value="MVP"> MVP</label>
+                    <label class="checkbox-item"><input type="checkbox" name="stage" value="Prototype"> Prototype</label>
+                    <label class="checkbox-item"><input type="checkbox" name="stage" value="Launched"> Launched</label>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="field-label">What type of design help do you need?</label>
+                <div class="checkbox-grid">
+                    <label class="checkbox-item"><input type="checkbox" name="help" value="UI"> UI design</label>
+                    <label class="checkbox-item"><input type="checkbox" name="help" value="UX"> UX design</label>
+                    <label class="checkbox-item"><input type="checkbox" name="help" value="Branding"> Branding</label>
+                    <label class="checkbox-item"><input type="checkbox" name="help" value="Product"> Product design</label>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="field-label">Tools you’re already using</label>
+                <input type="text" name="tools" placeholder="Figma, Webflow, Notion, Airtable…">
+            </div>
+        </div>
+
+        <!-- CARD 3 -->
+        <div class="card">
+            <div class="card-title">Collaboration setup</div>
+
+            <div class="field">
+                <label class="field-label">Is this a paid or unpaid role?</label>
+                <div class="checkbox-grid">
+                    <label class="checkbox-item"><input type="checkbox" name="paid" value="Paid"> Paid</label>
+                    <label class="checkbox-item"><input type="checkbox" name="paid" value="Unpaid"> Unpaid</label>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="field-label">Project niche</label>
+                <div class="checkbox-grid">
+                    <label class="checkbox-item"><input type="checkbox" name="niche" value="AI"> AI</label>
+                    <label class="checkbox-item"><input type="checkbox" name="niche" value="E-commerce"> E-commerce</label>
+                    <label class="checkbox-item"><input type="checkbox" name="niche" value="SaaS"> SaaS</label>
+                    <label class="checkbox-item"><input type="checkbox" name="niche" value="Health"> Health</label>
+                    <label class="checkbox-item"><input type="checkbox" name="niche" value="Education"> Education</label>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="field-label">Hours needed per week</label>
+                <input type="text" name="hours" placeholder="e.g. 3–5 hours per week">
+            </div>
+
+            <div class="field">
+                <label class="field-label">Beginner-friendly?</label>
+                <select name="beginner">
+                    <option value="">Select an option</option>
+                    <option value="Yes">Yes, beginners welcome</option>
+                    <option value="No">Prefer experienced designers</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- CARD 4 -->
+        <div class="card">
+            <div class="card-title">Extra context</div>
+
+            <div class="field">
+                <label class="field-label">Anything else?</label>
+                <textarea name="extra_notes" placeholder="Share context, constraints, expectations, or timelines."></textarea>
+            </div>
+
+            <div class="footer-row">
+                <button class="submit-btn" type="submit">Submit project →</button>
+            </div>
+        </div>
+
+    </form>
+</div>
+</body>
+</html>

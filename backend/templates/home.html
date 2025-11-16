@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playground</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+            background: #ffffff;
+            color: #111;
+        }
+
+        /* NAV */
+        .nav {
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .nav a {
+            margin-left: 24px;
+            text-decoration: none;
+            color: #111;
+            opacity: 0.8;
+        }
+        .nav a:hover {
+            opacity: 1;
+        }
+
+        /* HERO */
+        .hero {
+            text-align: center;
+            margin-top: 50px;
+            margin-bottom: 60px;
+            padding: 0 20px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #e8f0ff;
+            color: #3b82f6;
+            padding: 6px 16px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 14px;
+        }
+
+        .subtext {
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0.7;
+        }
+
+        /* HERO IMAGE */
+        .hero-image {
+            max-width: 1100px;
+            margin: 40px auto 80px auto;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .hero-image img {
+            width: 100%;
+            display: block;
+        }
+
+        /* BUILDER + FOUNDER */
+        .bf-section {
+            padding: 80px 20px;
+        }
+
+        .bf-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .bf-card {
+            background: #faf0d0;
+            padding: 60px 40px;
+            border-radius: 32px;
+            width: 480px;
+            text-align: center;
+        }
+
+        .bf-card h2 {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .bf-card p {
+            font-size: 18px;
+            opacity: 0.7;
+            margin-top: 10px;
+        }
+
+        .bf-btn {
+            display: inline-block;
+            margin-top: 32px;
+            padding: 18px 32px;
+            background: #000;
+            color: #fff;
+            border-radius: 40px;
+            font-size: 20px;
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .bf-btn:hover {
+            opacity: 0.8;
+        }
+
+        /* HOW IT WORKS */
+        .hiw-section {
+            max-width: 1100px;
+            margin: 100px auto;
+            padding: 0 20px;
+        }
+
+        .hiw-title {
+            text-align: center;
+            font-size: 40px;
+            font-weight: 800;
+            margin-bottom: 50px;
+        }
+
+        .hiw-grid {
+            display: flex;
+            gap: 20px;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .hiw-card {
+            flex: 1;
+            min-width: 290px;
+            background: #fafafa;
+            border-radius: 20px;
+            padding: 40px 24px;
+            text-align: center;
+        }
+
+        .hiw-circle {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            margin: 0 auto 20px auto;
+            font-size: 22px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 700;
+            color: white;
+        }
+
+        .hiw-1 { background: #e4b647; }
+        .hiw-2 { background: #e4584f; }
+        .hiw-3 { background: #58aafc; }
+
+        .hiw-card h3 {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .hiw-card p {
+            opacity: 0.75;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        /* TAG YOU'RE IT */
+        .abc-section {
+            max-width: 1100px;
+            margin: 100px auto;
+            padding: 0 20px 60px 20px;
+        }
+
+        .abc-title {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .abc-subtitle {
+            text-align: center;
+            opacity: 0.7;
+            margin-bottom: 40px;
+        }
+
+        .abc-card {
+            display: flex;
+            align-items: center;
+            padding: 28px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+
+        .circle {
+            min-width: 60px;
+            min-height: 60px;
+            border-radius: 50%;
+            font-size: 22px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 24px;
+            color: white;
+        }
+
+        .circle-a { background: #e4b647; }
+        .circle-b { background: #e4584f; }
+        .circle-c { background: #58aafc; }
+
+        .card-a { background: #fdf4d7; }
+        .card-b { background: #fde7e7; }
+        .card-c { background: #e9f5ff; }
+
+        .abc-card p {
+            font-size: 24px;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        /* MOBILE FIXES */
+        @media (max-width: 768px) {
+
+            /* Nav */
+            .nav {
+                padding: 20px;
+            }
+
+            /* Hero */
+            .hero h1 {
+                font-size: 32px;
+            }
+            .subtext {
+                font-size: 15px;
+            }
+
+            /* Hero image */
+            .hero-image {
+                max-width: 95%;
+                margin: 20px auto 50px auto;
+            }
+
+            /* Builder + Founder */
+            .bf-section {
+                padding: 40px 16px;
+            }
+            .bf-card {
+                width: 100%;
+                padding: 32px 20px;
+            }
+            .bf-card h2 { font-size: 24px; }
+            .bf-card p { font-size: 15px; }
+
+            /* How it works */
+            .hiw-section {
+                margin: 60px auto;
+            }
+            .hiw-title {
+                font-size: 30px;
+            }
+            .hiw-grid {
+                flex-direction: column;
+            }
+
+            /* ABC */
+            .abc-title { font-size: 30px; }
+            .abc-subtitle { font-size: 15px; }
+            .circle {
+                min-width: 50px;
+                min-height: 50px;
+                font-size: 18px;
+            }
+            .abc-card p {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAV -->
+    <div class="nav">
+        <div>PLAYGROUND</div>
+        <div>
+            <a href="/designer">For builders</a>
+            <a href="/founder">For founders</a>
+        </div>
+    </div>
+
+    <!-- HERO -->
+    <div class="hero">
+        <div class="badge">Intelligent matching engine</div>
+        <h1>Design. Play. Explore.</h1>
+        <p class="subtext">
+            An intelligent matching engine for builders, designers, and future creatives.
+            Discover projects that align with your curiosity.
+        </p>
+    </div>
+
+    <!-- HERO IMAGE -->
+    <div class="hero-image">
+        <img src="/static/Asset1.png" alt="hero image">
+    </div>
+
+    <!-- BUILDER + FOUNDER -->
+    <div class="bf-section">
+        <div class="bf-grid">
+
+            <div class="bf-card">
+                <h2>Explore different niches!</h2>
+                <p>Play and explore to find your niche.</p>
+                <a href="/designer" class="bf-btn">Builder →</a>
+            </div>
+
+            <div class="bf-card">
+                <h2>Keep your side projects alive!</h2>
+                <p>Connect to bring your ideas to life.</p>
+                <a href="/founder" class="bf-btn">Founder →</a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <div class="hiw-section">
+        <h2 class="hiw-title">How it works</h2>
+
+        <div class="hiw-grid">
+
+            <div class="hiw-card card-a">
+                <div class="hiw-circle hiw-1">1</div>
+                <h3>Play & Explore</h3>
+                <p>Try different projects to uncover what excites you. Every choice helps our engine learn your creative direction.</p>
+            </div>
+
+            <div class="hiw-card card-b">
+                <div class="hiw-circle hiw-2">2</div>
+                <h3>Match & Build</h3>
+                <p>Get paired with founders or collaborators who share your goals. Start creating together, no overthinking needed.</p>
+            </div>
+
+            <div class="hiw-card card-c">
+                <div class="hiw-circle hiw-3">3</div>
+                <h3>Remix & Re-Match</h3>
+                <p>Didn’t vibe with the niche? Explore new ideas and grow in a direction that fits better.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- TAG YOU'RE IT -->
+    <div class="abc-section">
+
+        <h2 class="abc-title">Tag, you're it!</h2>
+        <p class="abc-subtitle">The next generation of creative tech builders is already playing.</p>
+
+        <div class="abc-card card-a">
+            <div class="circle circle-a">A</div>
+            <p>Play alongside the bold, not behind them.</p>
+        </div>
+
+        <div class="abc-card card-b">
+            <div class="circle circle-b">B</div>
+            <p>Back the next generation of makers shaping digital creativity.</p>
+        </div>
+
+        <div class="abc-card card-c">
+            <div class="circle circle-c">C</div>
+            <p>Spot untapped innovation before anyone else.</p>
+        </div>
+
+    </div>
+
+</body>
+</html>
+

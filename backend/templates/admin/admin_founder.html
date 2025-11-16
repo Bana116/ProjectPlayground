@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Founder Detail</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        body {
+            margin: 0;
+            background: #020617;
+            font-family: "General Sans", sans-serif;
+            color: #f3f4f6;
+        }
+
+        .topbar {
+            width: 100%;
+            padding: 16px 22px;
+            background: #0f172a;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .page {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            font-family: "Clash Display";
+            font-size: 1.8rem;
+            margin-bottom: 18px;
+        }
+
+        .card {
+            background: #0f172a;
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid #1e293b;
+            margin-bottom: 28px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .row {
+            margin-bottom: 8px;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .matches {
+            display: grid;
+            gap: 16px;
+        }
+
+        .match-item {
+            background: #0f172a;
+            border-radius: 14px;
+            border: 1px solid #1e293b;
+            padding: 16px;
+        }
+
+        .match-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .score {
+            font-size: 0.85rem;
+            color: #3b82f6;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="topbar"></div>
+
+<div class="page">
+
+    <h1>Founder: {{ founder.full_name }}</h1>
+
+    <div class="card">
+        <div class="section-title">Project Info</div>
+
+        <div class="row"><strong>Name:</strong> {{ founder.project_name }}</div>
+        <div class="row"><strong>Email:</strong> {{ founder.email }}</div>
+        <div class="row"><strong>Website:</strong> {{ founder.website }}</div>
+        <div class="row"><strong>Stage:</strong> {{ founder.project_stage }}</div>
+        <div class="row"><strong>Niche:</strong> {{ founder.niche }}</div>
+    </div>
+
+    <h2 class="section-title">Top Matches</h2>
+    <div class="matches">
+        {% for m in matches %}
+        <div class="match-item">
+            <div class="match-name">{{ m.designer.full_name }}</div>
+            <div class="row">{{ m.designer.email }}</div>
+            <div class="score">Score: {{ m.score }}</div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+</body>
+</html>

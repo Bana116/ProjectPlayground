@@ -1,0 +1,213 @@
+/* ------------------------------
+   GLOBAL ROOT + FONTS + RESET
+--------------------------------*/
+@import url("https://api.fontshare.com/v2/css?f[]=clash-display@600,700&f[]=general-sans@400,500,600&display=swap");
+
+:root {
+    --bg: #05070a;
+    --card: #151822;
+    --border: #1f2430;
+    --text: #f8fafc;
+    --muted: #9ca3af;
+    --accent: #3b82f6;
+    --radius: 16px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "General Sans", system-ui, sans-serif;
+    background: radial-gradient(circle at top, #111827 0, #020617 55%);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.55;
+}
+
+/* ------------------------------
+   GLOBAL PAGE WRAPPER
+--------------------------------*/
+.page {
+    max-width: 900px;
+    margin: 40px auto 60px;
+    padding: 0 16px;
+}
+
+@media (max-width: 640px) {
+    .page {
+        margin-top: 24px;
+    }
+}
+
+/* ------------------------------
+   HEADERS / TITLES
+--------------------------------*/
+.header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: rgba(59, 130, 246, 0.12);
+    border: 1px solid rgba(59, 130, 246, 0.5);
+    color: var(--accent);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+h1 {
+    font-family: "Clash Display", system-ui, sans-serif;
+    font-size: 2.1rem;
+    margin-top: 14px;
+}
+
+.subtitle {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 0.98rem;
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ------------------------------
+   CARDS
+--------------------------------*/
+.card {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 20px 18px;
+    margin-bottom: 24px;
+}
+
+.card-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 12px;
+}
+
+@media (max-width: 640px) {
+    .card {
+        padding: 16px 14px;
+    }
+}
+
+/* ------------------------------
+   FORM FIELDS
+--------------------------------*/
+.field {
+    margin-bottom: 16px;
+}
+
+.field-label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #1f2937;
+    background: #020617;
+    color: var(--text);
+    font-size: 0.95rem;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    outline: 1px solid var(--accent);
+    border-color: var(--accent);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* ------------------------------
+   CHECKBOXES
+--------------------------------*/
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 6px 16px;
+    margin-top: 6px;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+.checkbox-item input {
+    width: auto;
+    accent-color: var(--accent);
+}
+
+/* ------------------------------
+   BUTTONS
+--------------------------------*/
+.submit-btn {
+    padding: 12px 22px;
+    border-radius: 999px;
+    border: none;
+    background: var(--accent);
+    color: white;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: 0.15s ease;
+    box-shadow: 0 14px 35px rgba(59, 130, 246, 0.35);
+}
+
+.submit-btn:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+/* Button full width on mobile */
+@media (max-width: 640px) {
+    .submit-btn {
+        width: 100%;
+    }
+}
+
+/* ------------------------------
+   FOOTER ROWS
+--------------------------------*/
+.footer-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+@media (max-width: 640px) {
+    .footer-row {
+        justify-content: stretch;
+    }
+}

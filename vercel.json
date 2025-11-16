@@ -1,0 +1,8 @@
+{
+    "public": "frontend",
+    "rewrites": [
+      { "source": "/designer", "destination": "/designer.html" },
+      { "source": "/founder", "destination": "/founder.html" }
+    ]
+  }
+  

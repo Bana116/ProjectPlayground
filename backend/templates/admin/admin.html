@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@600,700&f[]=general-sans@400,500,600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            background: #020617;
+            font-family: "General Sans", sans-serif;
+            color: #f3f4f6;
+        }
+
+        .topbar {
+            width: 100%;
+            padding: 16px 22px;
+            background: #0f172a;
+            border-bottom: 1px solid #1e293b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            font-family: "Clash Display";
+            font-size: 1.6rem;
+        }
+
+        .nav {
+            display: flex;
+            gap: 18px;
+        }
+
+        .nav a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.92rem;
+        }
+
+        .nav a:hover {
+            color: #3b82f6;
+        }
+
+        .page {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            font-size: 1.6rem;
+            font-family: "Clash Display";
+            margin-bottom: 20px;
+        }
+
+        .cards {
+            display: grid;
+            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        }
+
+        .card {
+            background: #0f172a;
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid #1e293b;
+        }
+
+        .card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .desc {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 16px;
+        }
+
+        .btn {
+            background: #3b82f6;
+            padding: 10px 16px;
+            border-radius: 10px;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            background: #2563eb;
+        }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <div class="brand">Admin</div>
+    <div class="nav">
+        <a href="/admin/founders?key=supersecret123">Founders</a>
+        <a href="/admin/designers?key=supersecret123">Designers</a>
+        <a href="/admin/matches?key=supersecret123">Matches</a>
+    </div>
+</div>
+
+<div class="page">
+    <h1 class="section-title">Dashboard Overview</h1>
+
+    <div class="cards">
+
+        <div class="card">
+            <h3>All Founders</h3>
+            <p class="desc">View, filter, and inspect all founder submissions.</p>
+            <a class="btn" href="/admin/founders?key=supersecret123">Open →</a>
+        </div>
+
+        <div class="card">
+            <h3>All Designers</h3>
+            <p class="desc">Browse designers and see their preferences + skill tags.</p>
+            <a class="btn" href="/admin/designers?key=supersecret123">Open →</a>
+        </div>
+
+        <div class="card">
+            <h3>Matching Engine</h3>
+            <p class="desc">See all matches ranked by ML scoring.</p>
+            <a class="btn" href="/admin/matches?key=supersecret123">Open →</a>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

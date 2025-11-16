@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All Matches</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        body {
+            margin: 0;
+            background: #020617;
+            font-family: "General Sans", sans-serif;
+            color: #f3f4f6;
+        }
+
+        .topbar {
+            width: 100%;
+            padding: 16px 22px;
+            background: #0f172a;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .page {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            font-family: "Clash Display";
+            font-size: 1.8rem;
+            margin-bottom: 24px;
+        }
+
+        .card {
+            background: #0f172a;
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid #1e293b;
+            margin-bottom: 26px;
+        }
+
+        .founder-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .match {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 14px;
+            background: #111a2b;
+            border: 1px solid #1e293b;
+        }
+
+        .designer-name {
+            font-size: 1rem;
+            margin-bottom: 6px;
+        }
+
+        .score {
+            font-size: 0.85rem;
+            color: #3b82f6;
+        }
+    </style>
+</head>
+<body>
+
+<div class="topbar"></div>
+
+<div class="page">
+    <h1>All Matches</h1>
+
+    {% for block in results %}
+    <div class="card">
+
+        <div class="founder-name">{{ block.founder.full_name }}</div>
+        <div class="meta">{{ block.founder.project_name }}</div>
+
+        {% for m in block.matches %}
+        <div class="match">
+            <div class="designer-name">{{ m.designer.full_name }}</div>
+            <div class="meta">{{ m.designer.email }}</div>
+            <div class="score">Score: {{ m.score }}</div>
+        </div>
+        {% endfor %}
+
+    </div>
+    {% endfor %}
+</div>
+
+</body>
+</html>

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playground</title>
+
+    <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&f[]=clash-display@600,700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "General Sans", system-ui, sans-serif;
+            background: #ffffff;
+            color: #111;
+        }
+
+        /* NAV */
+        .nav {
+            padding: 28px 40px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .nav a {
+            margin-left: 24px;
+            text-decoration: none;
+            color: #111;
+            opacity: 0.85;
+        }
+
+        .nav a:hover {
+            opacity: 1;
+        }
+
+        /* HERO */
+        .hero {
+            text-align: center;
+            margin-top: 60px;
+            margin-bottom: 60px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #e8f0ff;
+            color: #3b82f6;
+            padding: 6px 16px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-family: "Clash Display", system-ui, sans-serif;
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .subtext {
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0.75;
+            line-height: 1.55;
+        }
+
+        /* HERO IMAGE */
+        .hero-image {
+            max-width: 1000px;
+            margin: 40px auto 80px auto;
+            border-radius: 24px;
+            overflow: hidden;
+        }
+
+        .hero-image img {
+            width: 100%;
+            display: block;
+        }
+
+        /* BUILDER / FOUNDER */
+        .bf-section {
+            padding: 80px 20px;
+        }
+
+        .bf-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .bf-card {
+            background: #fafafb;
+            border: 1px solid #e5e7eb;
+            padding: 60px 40px;
+            border-radius: 32px;
+            width: 460px;
+            text-align: center;
+        }
+
+        .bf-card h2 {
+            font-size: 30px;
+            font-family: "Clash Display", system-ui, sans-serif;
+        }
+
+        .bf-card p {
+            font-size: 17px;
+            opacity: 0.7;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        .bf-btn {
+            display: inline-block;
+            margin-top: 32px;
+            padding: 18px 32px;
+            background: #111;
+            color: #fff;
+            border-radius: 40px;
+            font-size: 18px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: opacity 0.2s ease;
+        }
+
+        .bf-btn:hover {
+            opacity: 0.8;
+        }
+
+        /* HOW IT WORKS */
+        .hiw-section {
+            max-width: 1100px;
+            margin: 100px auto;
+            padding: 0 20px;
+        }
+
+        .hiw-title {
+            text-align: center;
+            font-family: "Clash Display";
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 50px;
+        }
+
+        .hiw-grid {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .hiw-card {
+            flex: 1;
+            min-width: 300px;
+            padding: 40px 30px;
+            border-radius: 24px;
+            text-align: center;
+            border: 1px solid #e5e7eb;
+        }
+
+        .hiw-circle {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            margin: 0 auto 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 700;
+            font-size: 22px;
+            color: #fff;
+        }
+
+        .hiw-1 { background: #e4b647; }
+        .hiw-2 { background: #e4584f; }
+        .hiw-3 { background: #58aafc; }
+
+        .hiw-card h3 {
+            font-size: 22px;
+            margin-bottom: 10px;
+            font-family: "Clash Display";
+        }
+
+        .hiw-card p {
+            opacity: 0.75;
+            line-height: 1.5;
+        }
+
+        /* TAG SECTION */
+        .abc-section {
+            max-width: 1000px;
+            margin: 0 auto 120px;
+            padding: 0 20px;
+        }
+
+        .abc-title {
+            text-align: center;
+            font-size: 36px;
+            font-family: "Clash Display";
+            margin-bottom: 12px;
+        }
+
+        .abc-subtitle {
+            text-align: center;
+            opacity: 0.7;
+            margin-bottom: 40px;
+        }
+
+        .abc-card {
+            display: flex;
+            align-items: center;
+            padding: 28px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .circle {
+            min-width: 60px;
+            min-height: 60px;
+            border-radius: 50%;
+            font-size: 22px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 24px;
+            color: white;
+        }
+
+        .circle-a { background: #e4b647; }
+        .circle-b { background: #e4584f; }
+        .circle-c { background: #58aafc; }
+
+        .abc-card p {
+            font-size: 22px;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+            h1 { font-size: 34px; }
+
+            .bf-card {
+                padding: 40px 28px;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="nav">
+    <div>PLAYGROUND</div>
+    <div>
+        <a href="designer.html">For designers</a>
+        <a href="founder.html">For founders</a>
+    </div>
+</div>
+
+<div class="hero">
+    <div class="badge">Intelligent matching engine</div>
+    <h1>Design. Play. Explore.</h1>
+    <p class="subtext">
+        An intelligent matching engine for builders, designers, and future creatives.  
+        Discover projects that align with your curiosity.
+    </p>
+</div>
+
+<div class="hero-image">
+    <img src="images/Asset1.png" alt="Hero">
+</div>
+
+<div class="bf-section">
+    <div class="bf-grid">
+        <div class="bf-card">
+            <h2>Explore different niches!</h2>
+            <p>Play and explore to find your niche.</p>
+            <a href="designer.html" class="bf-btn">Designer →</a>
+        </div>
+
+        <div class="bf-card">
+            <h2>Keep your side projects alive!</h2>
+            <p>Connect to bring your ideas to life.</p>
+            <a href="founder.html" class="bf-btn">Founder →</a>
+        </div>
+    </div>
+</div>
+
+<div class="hiw-section">
+    <h2 class="hiw-title">How it works</h2>
+    <div class="hiw-grid">
+        <div class="hiw-card">
+            <div class="hiw-circle hiw-1">1</div>
+            <h3>Play & Explore</h3>
+            <p>Try different projects to uncover what excites you.</p>
+        </div>
+
+        <div class="hiw-card">
+            <div class="hiw-circle hiw-2">2</div>
+            <h3>Match & Build</h3>
+            <p>Get paired with founders or collaborators who share your goals.</p>
+        </div>
+
+        <div class="hiw-card">
+            <div class="hiw-circle hiw-3">3</div>
+            <h3>Remix & Re-Match</h3>
+            <p>Explore new ideas and grow toward what fits better.</p>
+        </div>
+    </div>
+</div>
+
+<div class="abc-section">
+    <h2 class="abc-title">Tag, you're it!</h2>
+    <p class="abc-subtitle">The next generation of creative tech builders is already playing.</p>
+
+    <div class="abc-card">
+        <div class="circle circle-a">A</div>
+        <p>Play alongside the bold, not behind them.</p>
+    </div>
+
+    <div class="abc-card">
+        <div class="circle circle-b">B</div>
+        <p>Back the next generation of makers shaping digital creativity.</p>
+    </div>
+
+    <div class="abc-card">
+        <div class="circle circle-c">C</div>
+        <p>Spot untapped innovation before anyone else.</p>
+    </div>
+</div>
+
+<footer style="text-align:center; padding:48px 0; font-size:15px; color:#555; border-top:1px solid #eee; margin-top:80px;">
+    © 2025 Playground — built for curious creatives.
+</footer>
+
+</body>
+</html>
