@@ -1,5 +1,6 @@
 # match.py
-from database import get_all_designers, format_designer, format_founder
+from .database import get_all_designers, format_designer, format_founder
+
 
 # tiny helpers so we don’t crash on None
 def _norm_list(value):
