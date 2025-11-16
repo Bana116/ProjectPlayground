@@ -5,7 +5,7 @@ from fastapi.templating import Jinja2Templates
 from pathlib import Path
 
 from . import database
-from .match import match_score
+from .match import compute_match_score
 from .emailer import send_email
 from .email_utils import (
     send_founder_match_email,
@@ -146,7 +146,7 @@ async def submit_founder(
 
     database.save_founder(founder)
 
-    # Send founder: "welcome" email
+    # Send founder welcome email
     send_email(
         to=email,
         subject="You're in! 🎉",
@@ -165,11 +165,13 @@ async def submit_founder(
     # --------------------------
     designers = database.get_all_designers()
     formatted_designers = [database.format_designer(d) for d in designers]
-    formatted_founder = database.format_founder(founder)
+
+    # Founder is already a full dict — no need to use format_founder()
+    formatted_founder = founder
 
     ranked = []
     for d in formatted_designers:
-        score = match_score(d, formatted_founder)
+        score = compute_match_score(formatted_founder, d)
         ranked.append({"designer": d, "score": score})
 
     ranked.sort(key=lambda x: x["score"], reverse=True)
@@ -179,14 +181,14 @@ async def submit_founder(
         top_designer = best["designer"]
         top_score = best["score"]
 
-        # Save match in database
+        # Save match to DB
         save_match_record(
             founder_email=email,
             designer_email=top_designer.get("email"),
             score=top_score
         )
 
-        # Email both sides
+        # Notify both sides
         send_founder_match_email(formatted_founder, top_designer, top_score)
         send_designer_match_email(top_designer, formatted_founder, top_score)
 
