@@ -4,14 +4,14 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pathlib import Path
 
-import database
-from match import match_score
-from emailer import send_email
-from email_utils import (
+from . import database
+from .match import match_score
+from .emailer import send_email
+from .email_utils import (
     send_founder_match_email,
     send_designer_match_email,
 )
-from database_matches import save_match_record
+from .database_matches import save_match_record
 
 # ------------------------------
 # BASE DIR
@@ -201,5 +201,5 @@ async def submit_founder(
 # ------------------------------
 @app.get("/admin/matches")
 def view_matches():
-    from database_matches import get_all_match_records
+    from .database_matches import get_all_match_records
     return get_all_match_records()
