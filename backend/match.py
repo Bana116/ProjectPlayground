@@ -2,52 +2,73 @@
 from .database import get_all_designers, format_designer, format_founder
 
 
-# tiny helpers so we don’t crash on None
+# -------------------------------
+# Helpers to normalize values
+# -------------------------------
 def _norm_list(value):
+    """
+    Converts lists or comma-separated strings into
+    a clean, lowercase Python list.
+    """
     if not value:
         return []
+
     if isinstance(value, list):
         return [v.strip().lower() for v in value if v]
+
     return [v.strip().lower() for v in str(value).split(",") if v]
 
+
 def _norm_str(value):
+    """
+    Converts any value to a clean, lowercase string.
+    """
     return (value or "").strip().lower()
 
 
+# -------------------------------
+# Scoring Engine
+# -------------------------------
 def compute_match_score(founder, designer):
     """
-    Returns a score between 0 and 1 for how well this designer matches this founder.
-    You can tune this later – this is your 'ML-ish' brain.
+    Returns a score between 0 and 1 for how well this designer
+    matches this founder. You can tune this later.
     """
 
     score = 0
     max_score = 0
 
-    # 1) Niche / domain overlap
-    founder_niche = _norm_str(founder.get("niche"))
+    # 1) Niche overlap — FIXED to handle lists correctly
+    founder_niches = _norm_list(founder.get("niche"))
     designer_niches = _norm_list(designer.get("niche_interest"))
     max_score += 3
-    if founder_niche and designer_niches and founder_niche in designer_niches:
-        score += 3
 
-    # 2) Beginner-friendly vs designer experience goals
+    if founder_niches and designer_niches:
+        if any(n in designer_niches for n in founder_niches):
+            score += 3
+
+    # 2) Beginner friendly preference
     beginner = founder.get("beginner_friendly")
     max_score += 2
     if beginner == "Yes":
         score += 1
 
-    # 3) Tools overlap
+    # 3) Tool overlap
     founder_tools = _norm_list(founder.get("tools_used"))
     designer_tools = _norm_list(designer.get("tools"))
     max_score += 3
+
     if founder_tools and designer_tools:
         overlap = len(set(founder_tools) & set(designer_tools))
         score += min(overlap, 3)
 
-    # 4) Availability / support level (super rough for now)
+    # 4) Support level ↔ availability (very light weighting)
     max_score += 2
-    if founder.get("support_level") and designer.get("availability"):
-        score += 1  # just a small bump
+    founder_support = founder.get("support_level")
+    designer_availability = designer.get("availability")
+
+    if founder_support and designer_availability:
+        score += 1
 
     if max_score == 0:
         return 0.0
@@ -55,11 +76,19 @@ def compute_match_score(founder, designer):
     return round(score / max_score, 3)
 
 
+# -------------------------------
+# Best-match helper (optional)
+# -------------------------------
 def find_best_designer_for_founder(founder_row):
     """
-    founder_row is the raw DB row (tuple). We convert it to dict via format_founder.
-    Returns (designer_dict, score) or (None, 0).
+    founder_row is a raw DB row (tuple).
+    We convert it to a dict via format_founder().
+    Returns:
+        (designer_dict, score)
+    Or:
+        (None, 0)
     """
+
     founder = format_founder(founder_row)
 
     designers_rows = get_all_designers()
@@ -72,12 +101,11 @@ def find_best_designer_for_founder(founder_row):
         s = compute_match_score(founder, designer)
         scored.append((s, designer))
 
-    # sort by score descending
+    # highest score first
     scored.sort(key=lambda x: x[0], reverse=True)
 
     best_score, best_designer = scored[0]
 
-    # You can require a minimum score if you want
     if best_score <= 0:
         return None, 0.0
 

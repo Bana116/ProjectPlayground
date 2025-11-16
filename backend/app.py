@@ -6,12 +6,13 @@ from pathlib import Path
 
 from . import database
 from .match import compute_match_score
-from .emailer import send_email
 from .email_utils import (
+    send_email,
     send_founder_match_email,
     send_designer_match_email,
 )
 from .database_matches import save_match_record
+
 
 # ------------------------------
 # BASE DIR
@@ -83,11 +84,11 @@ async def submit_designer(
 
     database.save_designer(data)
 
-    # Designer welcome email
+    # Designer welcome email (fixed args)
     send_email(
-        to=email,
+        to_email=email,
         subject="You're in the designer playground 🎠",
-        html_content=f"""
+        message=f"""
             <h2>Welcome to Playground, {full_name}!</h2>
             <p>You’re officially in. We’ll match you with founders and projects that fit your skills and curiosity.</p>
             <p>You can update your info anytime by submitting the form again using the same email.</p>
@@ -146,11 +147,11 @@ async def submit_founder(
 
     database.save_founder(founder)
 
-    # Send founder welcome email
+    # Founder welcome email (fixed args)
     send_email(
-        to=email,
+        to_email=email,
         subject="You're in! 🎉",
-        html_content=f"""
+        message=f"""
             <h2>Welcome to Playground, {full_name}!</h2>
             <p>Thanks for submitting <strong>{project_name or "your project"}</strong>.</p>
             <p>We’re now matching you with aligned designers.</p>
@@ -166,7 +167,7 @@ async def submit_founder(
     designers = database.get_all_designers()
     formatted_designers = [database.format_designer(d) for d in designers]
 
-    # Founder is already a full dict — no need to use format_founder()
+    # Founder already is a dict — no format_needed
     formatted_founder = founder
 
     ranked = []
@@ -181,14 +182,14 @@ async def submit_founder(
         top_designer = best["designer"]
         top_score = best["score"]
 
-        # Save match to DB
+        # Save matched pair
         save_match_record(
             founder_email=email,
             designer_email=top_designer.get("email"),
             score=top_score
         )
 
-        # Notify both sides
+        # Notify both humans
         send_founder_match_email(formatted_founder, top_designer, top_score)
         send_designer_match_email(top_designer, formatted_founder, top_score)
 
