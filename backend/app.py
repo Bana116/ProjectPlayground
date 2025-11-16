@@ -6,8 +6,8 @@ from pathlib import Path
 
 from . import database
 from .match import compute_match_score
+from .emailer import send_email
 from .email_utils import (
-    send_email,
     send_founder_match_email,
     send_designer_match_email,
 )
@@ -20,6 +20,8 @@ from .database_matches import save_match_record
 BASE_DIR = Path(__file__).resolve().parent
 
 app = FastAPI()
+
+database.init_db()
 
 STATIC_DIR = BASE_DIR / "static"
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
@@ -84,11 +86,11 @@ async def submit_designer(
 
     database.save_designer(data)
 
-    # Designer welcome email (fixed args)
+    # Designer welcome email
     send_email(
-        to_email=email,
+        to=email,
         subject="You're in the designer playground 🎠",
-        message=f"""
+        html_content=f"""
             <h2>Welcome to Playground, {full_name}!</h2>
             <p>You’re officially in. We’ll match you with founders and projects that fit your skills and curiosity.</p>
             <p>You can update your info anytime by submitting the form again using the same email.</p>
@@ -147,11 +149,11 @@ async def submit_founder(
 
     database.save_founder(founder)
 
-    # Founder welcome email (fixed args)
+    # Send founder welcome email
     send_email(
-        to_email=email,
+        to=email,
         subject="You're in! 🎉",
-        message=f"""
+        html_content=f"""
             <h2>Welcome to Playground, {full_name}!</h2>
             <p>Thanks for submitting <strong>{project_name or "your project"}</strong>.</p>
             <p>We’re now matching you with aligned designers.</p>
@@ -167,8 +169,7 @@ async def submit_founder(
     designers = database.get_all_designers()
     formatted_designers = [database.format_designer(d) for d in designers]
 
-    # Founder already is a dict — no format_needed
-    formatted_founder = founder
+    formatted_founder = founder  # already dict
 
     ranked = []
     for d in formatted_designers:
@@ -182,14 +183,14 @@ async def submit_founder(
         top_designer = best["designer"]
         top_score = best["score"]
 
-        # Save matched pair
+        # Save match to DB
         save_match_record(
             founder_email=email,
             designer_email=top_designer.get("email"),
             score=top_score
         )
 
-        # Notify both humans
+        # Notify both sides
         send_founder_match_email(formatted_founder, top_designer, top_score)
         send_designer_match_email(top_designer, formatted_founder, top_score)
 
@@ -200,9 +201,29 @@ async def submit_founder(
 
 
 # ------------------------------
-# ADMIN — view saved match logs
+# ADMIN — view match logs
 # ------------------------------
 @app.get("/admin/matches")
 def view_matches():
+    from .database_matches import get_all_match_records
+    return get_all_match_records()
+
+
+# ------------------------------
+# ADMIN DEBUG ENDPOINTS (for Render)
+# ------------------------------
+
+@app.get("/admin/designers")
+def admin_designers():
+    from .database import get_all_designers
+    return get_all_designers()
+
+@app.get("/admin/founders")
+def admin_founders():
+    from .database import get_all_founders
+    return get_all_founders()
+
+@app.get("/admin/raw-matches")
+def admin_raw_matches():
     from .database_matches import get_all_match_records
     return get_all_match_records()
