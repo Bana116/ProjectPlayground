@@ -5,13 +5,7 @@ from fastapi.templating import Jinja2Templates
 from pathlib import Path
 
 from . import database
-from .match import compute_match_score
-from .emailer import send_email
-from .email_utils import (
-    send_founder_match_email,
-    send_designer_match_email,
-)
-from .database_matches import save_match_record
+from .email_utils import send_email
 
 
 # ------------------------------
@@ -93,12 +87,12 @@ async def submit_designer(
             # Still continue - don't fail the whole request
             # In production, you might want to log this and alert
 
-        # Designer welcome email (non-blocking - don't fail if email fails)
+        # Send designer confirmation email (non-blocking - don't fail if email fails)
         try:
             send_email(
                 to=email,
                 subject="You're in the designer playground 🎠",
-                html_content=f"""
+                html=f"""
                     <h2>Welcome to Playground, {full_name}!</h2>
                     <p>You're officially in. We'll match you with founders and projects that fit your skills and curiosity.</p>
                     <p>You can update your info anytime by submitting the form again using the same email.</p>
@@ -107,7 +101,7 @@ async def submit_designer(
                 """
             )
         except Exception as e:
-            print(f"❌ Error sending welcome email: {e}")
+            print(f"❌ Error sending confirmation email: {e}")
             # Continue - email failure shouldn't break the form submission
 
         return templates.TemplateResponse(
@@ -178,74 +172,22 @@ async def submit_founder(
             # Still continue - don't fail the whole request
             # In production, you might want to log this and alert
 
-        # Send founder welcome email (non-blocking - don't fail if email fails)
+        # Send founder confirmation email (non-blocking - don't fail if email fails)
         try:
             send_email(
                 to=email,
                 subject="You're in! 🎉",
-                html_content=f"""
+                html=f"""
                     <h2>Welcome to Playground, {full_name}!</h2>
                     <p>Thanks for submitting <strong>{project_name or "your project"}</strong>.</p>
-                    <p>We're now matching you with aligned designers.</p>
-                    <p>You'll receive match emails shortly.</p>
+                    <p>We've received your submission and will be in touch soon.</p>
                     <br>
                     <p style="opacity:0.6;font-size:14px;">— The Playground Engine</p>
                 """
             )
         except Exception as e:
-            print(f"❌ Error sending welcome email: {e}")
+            print(f"❌ Error sending confirmation email: {e}")
             # Continue - email failure shouldn't break the form submission
-
-        # --------------------------
-        # AUTO-MATCHING
-        # --------------------------
-        try:
-            designers = database.get_all_designers()
-            formatted_designers = [database.format_designer(d) for d in designers]
-
-            formatted_founder = founder  # already dict
-
-            ranked = []
-            for d in formatted_designers:
-                try:
-                    score = compute_match_score(formatted_founder, d)
-                    ranked.append({"designer": d, "score": score})
-                except Exception as e:
-                    print(f"❌ Error computing match score: {e}")
-                    continue
-
-            ranked.sort(key=lambda x: x["score"], reverse=True)
-
-            if ranked:
-                best = ranked[0]
-                top_designer = best["designer"]
-                top_score = best["score"]
-
-                # Only save match if designer has an email
-                designer_email = top_designer.get("email")
-                if designer_email:
-                    try:
-                        save_match_record(
-                            founder_email=email,
-                            designer_email=designer_email,
-                            score=top_score
-                        )
-                    except Exception as e:
-                        print(f"❌ Error saving match record: {e}")
-
-                    # Notify both sides (non-blocking)
-                    try:
-                        send_founder_match_email(formatted_founder, top_designer, top_score)
-                    except Exception as e:
-                        print(f"❌ Error sending founder match email: {e}")
-
-                    try:
-                        send_designer_match_email(top_designer, formatted_founder, top_score)
-                    except Exception as e:
-                        print(f"❌ Error sending designer match email: {e}")
-        except Exception as e:
-            print(f"❌ Error in matching process: {e}")
-            # Continue - matching failure shouldn't break form submission
 
         return templates.TemplateResponse(
             "founder_submitted.html",

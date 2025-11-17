@@ -1,5 +1,7 @@
 # match.py
 from .database import get_all_designers, format_designer, format_founder
+from .database_matches import save_match_record
+from .email_utils import send_match_email_to_founder, send_match_email_to_designer
 
 
 # -------------------------------
@@ -110,3 +112,33 @@ def find_best_designer_for_founder(founder_row):
         return None, 0.0
 
     return best_designer, best_score
+
+
+# -------------------------------
+# Match and Notify
+# -------------------------------
+def match_and_notify(founder, designer, score):
+    """
+    Saves a match record and sends notification emails to both parties.
+    """
+    try:
+        # Save match to database
+        save_match_record(
+            founder_email=founder.get("email"),
+            designer_email=designer.get("email"),
+            score=score
+        )
+        
+        # Send match emails to both parties
+        try:
+            send_match_email_to_founder(founder, designer)
+        except Exception as e:
+            print(f"❌ Error sending match email to founder: {e}")
+        
+        try:
+            send_match_email_to_designer(designer, founder)
+        except Exception as e:
+            print(f"❌ Error sending match email to designer: {e}")
+            
+    except Exception as e:
+        print(f"❌ Error in match_and_notify: {e}")
