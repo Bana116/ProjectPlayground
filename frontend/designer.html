@@ -1,326 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Designer Intake</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Fonts -->
-    <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&f[]=clash-display@600,700&display=swap" rel="stylesheet">
-
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: #ffffff;
-            color: #111;
-            font-family: "General Sans", system-ui, sans-serif;
-        }
-
-        .page {
-            max-width: 900px;
-            margin: 60px auto 80px;
-            padding: 0 20px;
-        }
-
-        /* Header */
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .badge {
-            display: inline-block;
-            background: #e8f0ff;
-            color: #3b82f6;
-            padding: 6px 16px;
-            border-radius: 999px;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        h1 {
-            font-family: "Clash Display", sans-serif;
-            font-size: 40px;
-            margin-top: 16px;
-            font-weight: 700;
-        }
-
-        .subtitle {
-            font-size: 18px;
-            opacity: 0.75;
-            max-width: 520px;
-            margin: 12px auto 0;
-            line-height: 1.55;
-        }
-
-        /* Cards */
-        .card {
-            background: #fafafa;
-            border: 1px solid #e5e7eb;
-            border-radius: 28px;
-            padding: 36px 32px;
-            margin-bottom: 32px;
-        }
-
-        .card-title {
-            font-size: 15px;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            color: #444;
-            margin-bottom: 24px;
-        }
-
-        /* Fields */
-        .field {
-            margin-bottom: 22px;
-        }
-
-        .field-label {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="url"],
-        textarea {
-            width: 100%;
-            padding: 14px 16px;
-            border-radius: 14px;
-            border: 1px solid #d1d5db;
-            background: #ffffff;
-            font-size: 15px;
-        }
-
-        input:focus,
-        textarea:focus {
-            border-color: #3b82f6;
-            outline: none;
-        }
-
-        textarea {
-            min-height: 90px;
-        }
-
-        /* Checkbox grid */
-        .checkbox-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 12px 18px;
-        }
-
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 15px;
-        }
-
-        .checkbox-item input {
-            accent-color: #3b82f6;
-        }
-
-        /* Footer */
-        .footer-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 24px;
-        }
-
-        .newsletter {
-            font-size: 14px;
-            opacity: 0.75;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* Submit button */
-        .submit-btn {
-            padding: 15px 32px;
-            background: #111;
-            color: #fff;
-            border-radius: 40px;
-            border: none;
-            font-size: 17px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: opacity 0.25s;
-        }
-
-        .submit-btn:hover {
-            opacity: 0.85;
-        }
-
-        /* Mobile */
-        @media (max-width: 640px) {
-            h1 {
-                font-size: 32px;
-            }
-
-            .card {
-                padding: 28px 22px;
-            }
-
-            .footer-row {
-                flex-direction: column;
-                gap: 20px;
-                align-items: stretch;
-            }
-
-            .submit-btn {
-                width: 100%;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>Designer Signup – Project Playground</title>
+  <link rel="stylesheet" href="/static/styles/designer.css" />
 </head>
 
 <body>
+  <h1>Join as a Designer</h1>
+  <p>Explore your niche and get matched with real founders.</p>
 
-<!-- HOME BUTTON ADDED HERE -->
-<a href="index.html" style="
-    display:inline-block;
-    margin:28px;
-    padding:10px 18px;
-    background:#111;
-    color:#fff;
-    border-radius:8px;
-    text-decoration:none;
-    font-size:14px;
-    font-weight:600;">
-    ← Home
-</a>
+  <form action="/submit-designer" method="POST">
 
-<div class="page">
+    <label>Name</label>
+    <input type="text" name="name" required />
 
-    <div class="header">
-        <div class="badge">Designer Intake</div>
-        <h1>Join the designer playground</h1>
-        <p class="subtitle">
-            Tell us how you work, what you enjoy, and what you’d like to explore.
-            Our engine uses this to match you with aligned founders.
-        </p>
+    <label>Email</label>
+    <input type="email" name="email" required />
+
+    <label>Availability</label>
+    <select name="availability" required>
+      <option value="immediately">I’m available to start right away</option>
+      <option value="summer">I’m available to start this summer</option>
+      <option value="discussion">I’m not sure yet — open to discussing</option>
+      <option value="not_available">I’m not available now but keep me in the loop</option>
+    </select>
+
+    <label>Which areas are you most interested in gaining experience in?</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" name="experience_interests" value="Mobile App Design" /> Mobile App Design</label>
+      <label><input type="checkbox" name="experience_interests" value="Web Design" /> Web Design</label>
+      <label><input type="checkbox" name="experience_interests" value="Design Systems" /> Design Systems</label>
+      <label><input type="checkbox" name="experience_interests" value="Not Sure" /> I’m not sure yet</label>
     </div>
 
-    <form action="/submit-designer" method="post">
+    <label>Which UX Design niche are you most interested in?</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" name="niche_interests" value="E-commerce" /> 🛒 E-commerce</label>
+      <label><input type="checkbox" name="niche_interests" value="Fashion & Lifestyle" /> 👗 Fashion & Lifestyle</label>
+      <label><input type="checkbox" name="niche_interests" value="Education / EdTech" /> 🎓 Education / EdTech</label>
+      <label><input type="checkbox" name="niche_interests" value="SaaS" /> 📱 SaaS (B2B dashboards)</label>
+      <label><input type="checkbox" name="niche_interests" value="Health & Wellness" /> 🧘 Health & Wellness</label>
+      <label><input type="checkbox" name="niche_interests" value="Fintech" /> 💸 Fintech</label>
+      <label><input type="checkbox" name="niche_interests" value="Gaming" /> 🎮 Gaming & Entertainment</label>
+      <label><input type="checkbox" name="niche_interests" value="Automotive" /> 🚗 Automotive UX</label>
+    </div>
 
-        <!-- Profile -->
-        <div class="card">
-            <div class="card-title">Profile</div>
+    <label>Are you comfortable using the following tools?</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" name="tools_comfort" value="Figma" /> Figma</label>
+      <label><input type="checkbox" name="tools_comfort" value="Notion" /> Notion</label>
+      <label><input type="checkbox" name="tools_comfort" value="Slack" /> Slack</label>
+    </div>
 
-            <div class="field">
-                <label class="field-label">Full name</label>
-                <input type="text" name="full_name" required>
-            </div>
+    <label>How would you describe your Figma experience?</label>
+    <select name="figma_skill" required>
+      <option value="beginner">Beginner</option>
+      <option value="intermediate">Intermediate</option>
+      <option value="confident">Confident</option>
+      <option value="none">Haven’t used it yet but open to learning</option>
+    </select>
 
-            <div class="field">
-                <label class="field-label">Email</label>
-                <input type="email" name="email" required>
-            </div>
-
-            <div class="field">
-                <label class="field-label">City & country</label>
-                <input type="text" name="city_country" placeholder="Toronto, Canada">
-            </div>
-
-            <div class="field">
-                <label class="field-label">Portfolio (URL)</label>
-                <input type="url" name="portfolio" placeholder="https://">
-            </div>
-        </div>
-
-        <!-- Work style -->
-        <div class="card">
-            <div class="card-title">Work style & focus</div>
-
-            <div class="field">
-                <label class="field-label">Availability</label>
-                <div class="checkbox-grid">
-                    <label class="checkbox-item"><input type="checkbox" value="Weekdays"> Weekdays</label>
-                    <label class="checkbox-item"><input type="checkbox" value="Weekends"> Weekends</label>
-                    <label class="checkbox-item"><input type="checkbox" value="Evenings"> Evenings</label>
-                    <label class="checkbox-item"><input type="checkbox" value="Flexible"> Flexible</label>
-                </div>
-            </div>
-
-            <div class="field">
-                <label class="field-label">Design focus</label>
-                <div class="checkbox-grid">
-                    <label class="checkbox-item"><input type="checkbox" value="UI Design"> UI Design</label>
-                    <label class="checkbox-item"><input type="checkbox" value="UX Design"> UX Design</label>
-                    <label class="checkbox-item"><input type="checkbox" value="Branding"> Branding</label>
-                    <label class="checkbox-item"><input type="checkbox" value="Product Design"> Product Design</label>
-                </div>
-            </div>
-        </div>
-
-        <!-- Goals -->
-        <div class="card">
-            <div class="card-title">Goals & preferences</div>
-
-            <div class="field">
-                <label class="field-label">Are you open to unpaid experience?</label>
-                <div class="checkbox-grid">
-                    <label class="checkbox-item"><input type="checkbox" value="Yes"> Yes</label>
-                    <label class="checkbox-item"><input type="checkbox" value="No"> No</label>
-                </div>
-            </div>
-
-            <div class="field">
-                <label class="field-label">Current goals</label>
-                <div class="checkbox-grid">
-                    <label class="checkbox-item"><input type="checkbox" value="Portfolio pieces"> Portfolio pieces</label>
-                    <label class="checkbox-item"><input type="checkbox" value="Real-world experience"> Real-world experience</label>
-                    <label class="checkbox-item"><input type="checkbox" value="Skill improvement"> Skill improvement</label>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tools -->
-        <div class="card">
-            <div class="card-title">Tools & resources</div>
-
-            <div class="field">
-                <label class="field-label">Tools you use</label>
-                <div class="checkbox-grid">
-                    <label class="checkbox-item"><input type="checkbox" value="Figma"> Figma</label>
-                    <label class="checkbox-item"><input type="checkbox" value="Illustrator"> Illustrator</label>
-                    <label class="checkbox-item"><input type="checkbox" value="Photoshop"> Photoshop</label>
-                    <label class="checkbox-item"><input type="checkbox" value="Webflow"> Webflow</label>
-                </div>
-            </div>
-        </div>
-
-        <!-- Extra -->
-        <div class="card">
-            <div class="card-title">Anything else?</div>
-
-            <div class="field">
-                <label class="field-label">Notes or preferences</label>
-                <textarea name="extra_notes" placeholder="Share anything that would help us match you better."></textarea>
-            </div>
-
-            <div class="footer-row">
-                <label class="newsletter">
-                    <input type="checkbox" value="Yes"> Receive updates about new matches.
-                </label>
-
-                <button class="submit-btn" type="submit">Join the playground →</button>
-            </div>
-        </div>
-    </form>
-
-</div>
-
-<footer style="text-align:center; padding:48px 0; font-size:15px; color:#555; border-top:1px solid #eee; margin-top:80px;">
-    © 2025 Playground — built for curious creatives.
-</footer>
-
+    <button type="submit">Join Playground</button>
+  </form>
 </body>
 </html>
 
