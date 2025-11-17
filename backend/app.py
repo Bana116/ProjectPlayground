@@ -211,8 +211,15 @@ async def submit_founder(
 # ------------------------------
 @app.get("/admin/matches")
 def view_matches():
-    from .database_matches import get_all_match_records
-    return get_all_match_records()
+    try:
+        from .database_matches import get_all_match_records
+        records = get_all_match_records()
+        return records
+    except Exception as e:
+        print(f"❌ Error in view_matches: {e}")
+        import traceback
+        traceback.print_exc()
+        return {"error": "Failed to retrieve matches"}
 
 
 # ------------------------------
@@ -221,16 +228,37 @@ def view_matches():
 
 @app.get("/admin/designers")
 def admin_designers():
-    from .database import get_all_designers
-    return get_all_designers()
+    try:
+        from .database import get_all_designers
+        designers = get_all_designers()
+        return designers
+    except Exception as e:
+        print(f"❌ Error in admin_designers: {e}")
+        import traceback
+        traceback.print_exc()
+        return {"error": "Failed to retrieve designers"}
 
 
 @app.get("/admin/founders")
 def admin_founders():
-    from .database import get_all_founders
-    return get_all_founders()
+    try:
+        from .database import get_all_founders
+        founders = get_all_founders()
+        return founders
+    except Exception as e:
+        print(f"❌ Error in admin_founders: {e}")
+        import traceback
+        traceback.print_exc()
+        return {"error": "Failed to retrieve founders"}
 
 @app.get("/admin/raw-matches")
 def admin_raw_matches():
-    from .database_matches import get_all_match_records
-    return get_all_match_records()
+    try:
+        from .database_matches import get_all_match_records
+        records = get_all_match_records()
+        return records
+    except Exception as e:
+        print(f"❌ Error in admin_raw_matches: {e}")
+        import traceback
+        traceback.print_exc()
+        return {"error": "Failed to retrieve match records"}
