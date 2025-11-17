@@ -162,39 +162,59 @@ def init_db():
 # SAVE DESIGNER
 # -----------------------------
 def save_designer(data):
-    conn = get_connection()
-    cur = get_cursor(conn)
-    placeholder = get_placeholder()
+    conn = None
+    try:
+        conn = get_connection()
+        cur = get_cursor(conn)
+        placeholder = get_placeholder()
 
-    cur.execute(f"""
-        INSERT INTO designers (
-            full_name, email, city_country, portfolio,
-            availability, focus, interest_areas,
-            unpaid_experience, goals, niche_interest,
-            tools, figma_experience, resources,
-            extra_notes, newsletter
-        )
-        VALUES ({', '.join([placeholder] * 15)})
-    """, (
-        data["full_name"],
-        data["email"],
-        data["city_country"],
-        data["portfolio"],
-        ",".join(data["availability"]),
-        ",".join(data["focus"]),
-        ",".join(data["interest_areas"]),
-        ",".join(data["unpaid_experience"]),
-        ",".join(data["goals"]),
-        ",".join(data["niche_interest"]),
-        ",".join(data["tools"]),
-        ",".join(data["figma_experience"]),
-        ",".join(data["resources"]),
-        data["extra_notes"],
-        data["newsletter"]
-    ))
+        # Ensure all list fields are lists
+        availability = data.get("availability", []) or []
+        focus = data.get("focus", []) or []
+        interest_areas = data.get("interest_areas", []) or []
+        unpaid_experience = data.get("unpaid_experience", []) or []
+        goals = data.get("goals", []) or []
+        niche_interest = data.get("niche_interest", []) or []
+        tools = data.get("tools", []) or []
+        figma_experience = data.get("figma_experience", []) or []
+        resources = data.get("resources", []) or []
 
-    conn.commit()
-    conn.close()
+        cur.execute(f"""
+            INSERT INTO designers (
+                full_name, email, city_country, portfolio,
+                availability, focus, interest_areas,
+                unpaid_experience, goals, niche_interest,
+                tools, figma_experience, resources,
+                extra_notes, newsletter
+            )
+            VALUES ({', '.join([placeholder] * 15)})
+        """, (
+            data.get("full_name", ""),
+            data.get("email", ""),
+            data.get("city_country", "") or "",
+            data.get("portfolio", "") or "",
+            ",".join(availability) if availability else "",
+            ",".join(focus) if focus else "",
+            ",".join(interest_areas) if interest_areas else "",
+            ",".join(unpaid_experience) if unpaid_experience else "",
+            ",".join(goals) if goals else "",
+            ",".join(niche_interest) if niche_interest else "",
+            ",".join(tools) if tools else "",
+            ",".join(figma_experience) if figma_experience else "",
+            ",".join(resources) if resources else "",
+            data.get("extra_notes", "") or "",
+            data.get("newsletter", "") or ""
+        ))
+
+        conn.commit()
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        print(f"❌ Error in save_designer: {e}")
+        raise  # Re-raise so caller can handle it
+    finally:
+        if conn:
+            conn.close()
 
 
 # -----------------------------

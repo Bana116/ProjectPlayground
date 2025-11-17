@@ -66,43 +66,65 @@ async def submit_designer(
     extra_notes: str = Form(""),
     newsletter: str = Form("")
 ):
-    data = {
-        "full_name": full_name,
-        "email": email,
-        "city_country": city_country,
-        "portfolio": portfolio,
-        "availability": availability,
-        "focus": focus,
-        "interest_areas": interest_areas,
-        "unpaid_experience": unpaid_experience,
-        "goals": goals,
-        "niche_interest": niche_interest,
-        "tools": tools,
-        "figma_experience": figma_experience,
-        "resources": resources,
-        "extra_notes": extra_notes,
-        "newsletter": newsletter,
-    }
+    try:
+        data = {
+            "full_name": full_name,
+            "email": email,
+            "city_country": city_country or "",
+            "portfolio": portfolio or "",
+            "availability": availability if availability else [],
+            "focus": focus if focus else [],
+            "interest_areas": interest_areas if interest_areas else [],
+            "unpaid_experience": unpaid_experience if unpaid_experience else [],
+            "goals": goals if goals else [],
+            "niche_interest": niche_interest if niche_interest else [],
+            "tools": tools if tools else [],
+            "figma_experience": figma_experience if figma_experience else [],
+            "resources": resources if resources else [],
+            "extra_notes": extra_notes or "",
+            "newsletter": newsletter or "",
+        }
 
-    database.save_designer(data)
+        # Save designer to database
+        try:
+            database.save_designer(data)
+        except Exception as e:
+            print(f"❌ Error saving designer to database: {e}")
+            # Still continue - don't fail the whole request
+            # In production, you might want to log this and alert
 
-    # Designer welcome email
-    send_email(
-        to=email,
-        subject="You're in the designer playground 🎠",
-        html_content=f"""
-            <h2>Welcome to Playground, {full_name}!</h2>
-            <p>You’re officially in. We’ll match you with founders and projects that fit your skills and curiosity.</p>
-            <p>You can update your info anytime by submitting the form again using the same email.</p>
-            <br>
-            <p style="opacity:0.6;font-size:14px;">— The Playground Engine</p>
-        """
-    )
+        # Designer welcome email (non-blocking - don't fail if email fails)
+        try:
+            send_email(
+                to=email,
+                subject="You're in the designer playground 🎠",
+                html_content=f"""
+                    <h2>Welcome to Playground, {full_name}!</h2>
+                    <p>You're officially in. We'll match you with founders and projects that fit your skills and curiosity.</p>
+                    <p>You can update your info anytime by submitting the form again using the same email.</p>
+                    <br>
+                    <p style="opacity:0.6;font-size:14px;">— The Playground Engine</p>
+                """
+            )
+        except Exception as e:
+            print(f"❌ Error sending welcome email: {e}")
+            # Continue - email failure shouldn't break the form submission
 
-    return templates.TemplateResponse(
-        "designer_submitted.html",
-        {"request": request, "data": data}
-    )
+        return templates.TemplateResponse(
+            "designer_submitted.html",
+            {"request": request, "data": data}
+        )
+    
+    except Exception as e:
+        print(f"❌ Critical error in submit_designer: {e}")
+        import traceback
+        traceback.print_exc()
+        # Return error page instead of 500
+        return templates.TemplateResponse(
+            "designer_submitted.html",
+            {"request": request, "data": {"error": "There was an error processing your submission. Please try again."}},
+            status_code=200  # Still return 200 to show the page, but with error message
+        )
 
 
 # ------------------------------
