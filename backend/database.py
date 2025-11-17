@@ -1,57 +1,158 @@
+import os
 import sqlite3
 from pathlib import Path
 
+# Detect database type from environment
+DATABASE_URL = os.getenv("DATABASE_URL")
 DB_PATH = Path(__file__).resolve().parent / "matcher.db"
+
+# Determine if we're using PostgreSQL or SQLite
+USE_POSTGRES = DATABASE_URL and DATABASE_URL.startswith("postgres")
+
+if USE_POSTGRES:
+    import psycopg2
+    from psycopg2.extras import RealDictCursor
+
+
+# -----------------------------
+# DATABASE CONNECTION HELPERS
+# -----------------------------
+def get_connection():
+    """Get database connection (PostgreSQL or SQLite)"""
+    if USE_POSTGRES:
+        # Parse DATABASE_URL (format: postgres://user:pass@host:port/dbname)
+        # Render sometimes provides postgres://, sometimes postgresql://
+        db_url = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+        return psycopg2.connect(db_url)
+    else:
+        return sqlite3.connect(DB_PATH)
+
+
+def get_cursor(conn):
+    """Get database cursor with appropriate settings"""
+    if USE_POSTGRES:
+        return conn.cursor(cursor_factory=RealDictCursor)
+    else:
+        return conn.cursor()
+
+
+def get_placeholder():
+    """Get the correct placeholder for parameterized queries"""
+    return "%s" if USE_POSTGRES else "?"
 
 
 # -----------------------------
 # INIT: Create tables if missing
 # -----------------------------
 def init_db():
-    conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
+    conn = get_connection()
+    cur = get_cursor(conn)
 
     # Designers table
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS designers (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        full_name TEXT,
-        email TEXT,
-        city_country TEXT,
-        portfolio TEXT,
-        availability TEXT,
-        focus TEXT,
-        interest_areas TEXT,
-        unpaid_experience TEXT,
-        goals TEXT,
-        niche_interest TEXT,
-        tools TEXT,
-        figma_experience TEXT,
-        resources TEXT,
-        extra_notes TEXT,
-        newsletter TEXT
-    )
-    """)
+    if USE_POSTGRES:
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS designers (
+            id SERIAL PRIMARY KEY,
+            full_name TEXT,
+            email TEXT,
+            city_country TEXT,
+            portfolio TEXT,
+            availability TEXT,
+            focus TEXT,
+            interest_areas TEXT,
+            unpaid_experience TEXT,
+            goals TEXT,
+            niche_interest TEXT,
+            tools TEXT,
+            figma_experience TEXT,
+            resources TEXT,
+            extra_notes TEXT,
+            newsletter TEXT
+        )
+        """)
+    else:
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS designers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            full_name TEXT,
+            email TEXT,
+            city_country TEXT,
+            portfolio TEXT,
+            availability TEXT,
+            focus TEXT,
+            interest_areas TEXT,
+            unpaid_experience TEXT,
+            goals TEXT,
+            niche_interest TEXT,
+            tools TEXT,
+            figma_experience TEXT,
+            resources TEXT,
+            extra_notes TEXT,
+            newsletter TEXT
+        )
+        """)
 
     # Founders table
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS founders (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        full_name TEXT,
-        email TEXT,
-        project_name TEXT,
-        website TEXT,
-        project_stage TEXT,
-        design_help TEXT,
-        tools_used TEXT,
-        paid_role TEXT,
-        niche TEXT,
-        estimated_hours TEXT,
-        beginner_friendly TEXT,
-        support_level TEXT,
-        extra_notes TEXT
-    )
-    """)
+    if USE_POSTGRES:
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS founders (
+            id SERIAL PRIMARY KEY,
+            full_name TEXT,
+            email TEXT,
+            project_name TEXT,
+            website TEXT,
+            project_stage TEXT,
+            design_help TEXT,
+            tools_used TEXT,
+            paid_role TEXT,
+            niche TEXT,
+            estimated_hours TEXT,
+            beginner_friendly TEXT,
+            support_level TEXT,
+            extra_notes TEXT
+        )
+        """)
+    else:
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS founders (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            full_name TEXT,
+            email TEXT,
+            project_name TEXT,
+            website TEXT,
+            project_stage TEXT,
+            design_help TEXT,
+            tools_used TEXT,
+            paid_role TEXT,
+            niche TEXT,
+            estimated_hours TEXT,
+            beginner_friendly TEXT,
+            support_level TEXT,
+            extra_notes TEXT
+        )
+        """)
+
+    # Matches table (for database_matches.py)
+    if USE_POSTGRES:
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS matches (
+            id SERIAL PRIMARY KEY,
+            founder_email TEXT,
+            designer_email TEXT,
+            score REAL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """)
+    else:
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS matches (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            founder_email TEXT,
+            designer_email TEXT,
+            score REAL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """)
 
     conn.commit()
     conn.close()
@@ -61,10 +162,11 @@ def init_db():
 # SAVE DESIGNER
 # -----------------------------
 def save_designer(data):
-    conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
+    conn = get_connection()
+    cur = get_cursor(conn)
+    placeholder = get_placeholder()
 
-    cur.execute("""
+    cur.execute(f"""
         INSERT INTO designers (
             full_name, email, city_country, portfolio,
             availability, focus, interest_areas,
@@ -72,7 +174,7 @@ def save_designer(data):
             tools, figma_experience, resources,
             extra_notes, newsletter
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES ({', '.join([placeholder] * 15)})
     """, (
         data["full_name"],
         data["email"],
@@ -99,54 +201,85 @@ def save_designer(data):
 # SAVE FOUNDER
 # -----------------------------
 def save_founder(data):
-    conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
+    conn = None
+    try:
+        conn = get_connection()
+        cur = get_cursor(conn)
+        placeholder = get_placeholder()
 
-    cur.execute("""
-        INSERT INTO founders (
-            full_name, email, project_name, website,
-            project_stage, design_help, tools_used,
-            paid_role, niche, estimated_hours,
-            beginner_friendly, support_level, extra_notes
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, (
-        data["full_name"],
-        data["email"],
-        data["project_name"],
-        data["website"],
-        ",".join(data["project_stage"]),
-        ",".join(data["design_help"]),
-        data["tools_used"],
-        ",".join(data["paid_role"]),
-        ",".join(data["niche"]),
-        data["estimated_hours"],
-        data["beginner_friendly"],
-        ",".join(data["support_level"]),
-        data["extra_notes"]
-    ))
+        # Ensure all list fields are lists
+        project_stage = data.get("project_stage", []) or []
+        design_help = data.get("design_help", []) or []
+        paid_role = data.get("paid_role", []) or []
+        niche = data.get("niche", []) or []
+        support_level = data.get("support_level", []) or []
 
-    conn.commit()
-    conn.close()
+        cur.execute(f"""
+            INSERT INTO founders (
+                full_name, email, project_name, website,
+                project_stage, design_help, tools_used,
+                paid_role, niche, estimated_hours,
+                beginner_friendly, support_level, extra_notes
+            )
+            VALUES ({', '.join([placeholder] * 13)})
+        """, (
+            data.get("full_name", ""),
+            data.get("email", ""),
+            data.get("project_name", ""),
+            data.get("website", ""),
+            ",".join(project_stage) if project_stage else "",
+            ",".join(design_help) if design_help else "",
+            data.get("tools_used", "") or "",
+            ",".join(paid_role) if paid_role else "",
+            ",".join(niche) if niche else "",
+            data.get("estimated_hours", "") or "",
+            data.get("beginner_friendly", "") or "",
+            ",".join(support_level) if support_level else "",
+            data.get("extra_notes", "") or ""
+        ))
+
+        conn.commit()
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        print(f"❌ Error in save_founder: {e}")
+        raise  # Re-raise so caller can handle it
+    finally:
+        if conn:
+            conn.close()
 
 
 # -----------------------------
 # FETCH ALL
 # -----------------------------
 def get_all_designers():
-    conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
+    conn = get_connection()
+    cur = get_cursor(conn)
     cur.execute("SELECT * FROM designers")
-    rows = cur.fetchall()
+    
+    if USE_POSTGRES:
+        rows = cur.fetchall()
+        # Convert RealDictRow to tuple for compatibility
+        rows = [tuple(row.values()) for row in rows]
+    else:
+        rows = cur.fetchall()
+    
     conn.close()
     return rows
 
 
 def get_all_founders():
-    conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
+    conn = get_connection()
+    cur = get_cursor(conn)
     cur.execute("SELECT * FROM founders")
-    rows = cur.fetchall()
+    
+    if USE_POSTGRES:
+        rows = cur.fetchall()
+        # Convert RealDictRow to tuple for compatibility
+        rows = [tuple(row.values()) for row in rows]
+    else:
+        rows = cur.fetchall()
+    
     conn.close()
     return rows
 
@@ -201,10 +334,17 @@ def format_founder(row):
 # GET FOUNDER BY ID
 # ---------------------------
 def get_founder_by_id(founder_id):
-    conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM founders WHERE id = ?", (founder_id,))
-    row = cur.fetchone()
+    conn = get_connection()
+    cur = get_cursor(conn)
+    placeholder = get_placeholder()
+    cur.execute(f"SELECT * FROM founders WHERE id = {placeholder}", (founder_id,))
+    
+    if USE_POSTGRES:
+        row = cur.fetchone()
+        if row:
+            row = tuple(row.values())
+    else:
+        row = cur.fetchone()
+    
     conn.close()
     return row
-

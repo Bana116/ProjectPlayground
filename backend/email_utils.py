@@ -12,10 +12,15 @@ FROM_EMAIL = os.getenv("FROM_EMAIL")  # Example: "playground@yourdomain.com"
 def send_email(to_email: str, subject: str, message: str):
     """
     Sends a single HTML email via Resend API.
+    Returns response object if successful, None otherwise.
     """
     if not RESEND_API_KEY:
         print("❌ Missing RESEND_API_KEY. Check Render environment variables.")
-        return
+        return None
+    
+    if not FROM_EMAIL:
+        print("❌ Missing FROM_EMAIL. Check Render environment variables.")
+        return None
 
     url = "https://api.resend.com/emails"
     headers = {
@@ -31,11 +36,21 @@ def send_email(to_email: str, subject: str, message: str):
     }
 
     try:
-        response = requests.post(url, json=data, headers=headers)
+        response = requests.post(url, json=data, headers=headers, timeout=10)
         print("📬 Resend Response:", response.status_code, response.text)
-        return response
+        if response.status_code == 200:
+            return response
+        else:
+            print(f"❌ Resend API returned error: {response.status_code}")
+            return None
+    except requests.exceptions.Timeout:
+        print("❌ Error sending email: Request timeout")
+        return None
+    except requests.exceptions.RequestException as e:
+        print(f"❌ Error sending email: {e}")
+        return None
     except Exception as e:
-        print("❌ Error sending email:", e)
+        print(f"❌ Unexpected error sending email: {e}")
         return None
 
 

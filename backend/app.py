@@ -131,73 +131,115 @@ async def submit_founder(
     support_level: list[str] = Form([]),
     extra_notes: str = Form("")
 ):
-    founder = {
-        "full_name": full_name,
-        "email": email,
-        "project_name": project_name,
-        "website": website,
-        "project_stage": project_stage,
-        "design_help": design_help,
-        "tools_used": tools_used,
-        "paid_role": paid_role,
-        "niche": niche,
-        "estimated_hours": estimated_hours,
-        "beginner_friendly": beginner_friendly,
-        "support_level": support_level,
-        "extra_notes": extra_notes,
-    }
+    try:
+        founder = {
+            "full_name": full_name,
+            "email": email,
+            "project_name": project_name,
+            "website": website,
+            "project_stage": project_stage if project_stage else [],
+            "design_help": design_help if design_help else [],
+            "tools_used": tools_used or "",
+            "paid_role": paid_role if paid_role else [],
+            "niche": niche if niche else [],
+            "estimated_hours": estimated_hours or "",
+            "beginner_friendly": beginner_friendly or "",
+            "support_level": support_level if support_level else [],
+            "extra_notes": extra_notes or "",
+        }
 
-    database.save_founder(founder)
+        # Save founder to database
+        try:
+            database.save_founder(founder)
+        except Exception as e:
+            print(f"❌ Error saving founder to database: {e}")
+            # Still continue - don't fail the whole request
+            # In production, you might want to log this and alert
 
-    # Send founder welcome email
-    send_email(
-        to=email,
-        subject="You're in! 🎉",
-        html_content=f"""
-            <h2>Welcome to Playground, {full_name}!</h2>
-            <p>Thanks for submitting <strong>{project_name or "your project"}</strong>.</p>
-            <p>We’re now matching you with aligned designers.</p>
-            <p>You’ll receive match emails shortly.</p>
-            <br>
-            <p style="opacity:0.6;font-size:14px;">— The Playground Engine</p>
-        """
-    )
+        # Send founder welcome email (non-blocking - don't fail if email fails)
+        try:
+            send_email(
+                to=email,
+                subject="You're in! 🎉",
+                html_content=f"""
+                    <h2>Welcome to Playground, {full_name}!</h2>
+                    <p>Thanks for submitting <strong>{project_name or "your project"}</strong>.</p>
+                    <p>We're now matching you with aligned designers.</p>
+                    <p>You'll receive match emails shortly.</p>
+                    <br>
+                    <p style="opacity:0.6;font-size:14px;">— The Playground Engine</p>
+                """
+            )
+        except Exception as e:
+            print(f"❌ Error sending welcome email: {e}")
+            # Continue - email failure shouldn't break the form submission
 
-    # --------------------------
-    # AUTO-MATCHING
-    # --------------------------
-    designers = database.get_all_designers()
-    formatted_designers = [database.format_designer(d) for d in designers]
+        # --------------------------
+        # AUTO-MATCHING
+        # --------------------------
+        try:
+            designers = database.get_all_designers()
+            formatted_designers = [database.format_designer(d) for d in designers]
 
-    formatted_founder = founder  # already dict
+            formatted_founder = founder  # already dict
 
-    ranked = []
-    for d in formatted_designers:
-        score = compute_match_score(formatted_founder, d)
-        ranked.append({"designer": d, "score": score})
+            ranked = []
+            for d in formatted_designers:
+                try:
+                    score = compute_match_score(formatted_founder, d)
+                    ranked.append({"designer": d, "score": score})
+                except Exception as e:
+                    print(f"❌ Error computing match score: {e}")
+                    continue
 
-    ranked.sort(key=lambda x: x["score"], reverse=True)
+            ranked.sort(key=lambda x: x["score"], reverse=True)
 
-    if ranked:
-        best = ranked[0]
-        top_designer = best["designer"]
-        top_score = best["score"]
+            if ranked:
+                best = ranked[0]
+                top_designer = best["designer"]
+                top_score = best["score"]
 
-        # Save match to DB
-        save_match_record(
-            founder_email=email,
-            designer_email=top_designer.get("email"),
-            score=top_score
+                # Only save match if designer has an email
+                designer_email = top_designer.get("email")
+                if designer_email:
+                    try:
+                        save_match_record(
+                            founder_email=email,
+                            designer_email=designer_email,
+                            score=top_score
+                        )
+                    except Exception as e:
+                        print(f"❌ Error saving match record: {e}")
+
+                    # Notify both sides (non-blocking)
+                    try:
+                        send_founder_match_email(formatted_founder, top_designer, top_score)
+                    except Exception as e:
+                        print(f"❌ Error sending founder match email: {e}")
+
+                    try:
+                        send_designer_match_email(top_designer, formatted_founder, top_score)
+                    except Exception as e:
+                        print(f"❌ Error sending designer match email: {e}")
+        except Exception as e:
+            print(f"❌ Error in matching process: {e}")
+            # Continue - matching failure shouldn't break form submission
+
+        return templates.TemplateResponse(
+            "founder_submitted.html",
+            {"request": request, "data": founder}
         )
-
-        # Notify both sides
-        send_founder_match_email(formatted_founder, top_designer, top_score)
-        send_designer_match_email(top_designer, formatted_founder, top_score)
-
-    return templates.TemplateResponse(
-        "founder_submitted.html",
-        {"request": request, "data": founder}
-    )
+    
+    except Exception as e:
+        print(f"❌ Critical error in submit_founder: {e}")
+        import traceback
+        traceback.print_exc()
+        # Return error page instead of 500
+        return templates.TemplateResponse(
+            "founder_submitted.html",
+            {"request": request, "data": {"error": "There was an error processing your submission. Please try again."}},
+            status_code=200  # Still return 200 to show the page, but with error message
+        )
 
 
 # ------------------------------
@@ -217,6 +259,7 @@ def view_matches():
 def admin_designers():
     from .database import get_all_designers
     return get_all_designers()
+
 
 @app.get("/admin/founders")
 def admin_founders():
