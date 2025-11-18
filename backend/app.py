@@ -3,7 +3,8 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import sqlite3
-from email_utils import send_designer_confirmation, send_founder_confirmation
+from backend.email_utils import send_designer_confirmation, send_founder_confirmation
+
 
 # ------------------------------
 # App Setup
