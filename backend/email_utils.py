@@ -123,4 +123,46 @@ def send_match_email_to_designer(designer, founder):
         html=html
     )
 
+# ----------------------------------------------------
+# SIMPLE CONFIRMATION EMAILS (forms submitted)
+# ----------------------------------------------------
+
+def send_designer_confirmation(name: str, email: str):
+    """
+    Email the designer a simple confirmation after they submit the form.
+    """
+    subject = "You're in the designer playground 🎠"
+
+    html = f"""
+    <p>Hi {name},</p>
+    <p>Thanks for joining Project Playground!</p>
+    <p>We’ve saved your preferences (availability, niches, tools, etc.)
+       and we’ll start matching you with founders as the database grows.</p>
+    <p>You’ll get an email when you’re paired with a project. You can always
+       ask for a rematch if the fit isn’t right.</p>
+    <br>
+    <p style="opacity:0.7;">– The Playground Team</p>
+    """
+
+    send_email(to=email, subject=subject, html=html)
+
+
+def send_founder_confirmation(name: str, email: str):
+    """
+    Email the founder a simple confirmation after they submit the form.
+    """
+    subject = "You’re in – we’re finding your designer 🧱"
+
+    html = f"""
+    <p>Hi {name},</p>
+    <p>Thanks for submitting your project to Project Playground.</p>
+    <p>We’ve saved your project details (niche, time commitment, support level)
+       and we’ll start matching you with designers as the database grows.</p>
+    <p>You’ll get an email when we’ve found a good first match.
+       You can always request a rematch if it’s not the right fit.</p>
+    <br>
+    <p style="opacity:0.7;">– The Playground Team</p>
+    """
+
+    send_email(to=email, subject=subject, html=html)
 
